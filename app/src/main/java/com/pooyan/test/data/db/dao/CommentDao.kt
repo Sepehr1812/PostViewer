@@ -10,6 +10,9 @@ import com.pooyan.test.data.db.entities.CommentEntity
 interface CommentDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCommentList(commentEntityList: List<CommentEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertComment(commentEntity: CommentEntity)
 
     @Query("SELECT * FROM comment WHERE postId = :postId ORDER BY id DESC LIMIT :count")

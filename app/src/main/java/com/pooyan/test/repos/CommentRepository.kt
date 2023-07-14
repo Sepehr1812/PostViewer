@@ -7,6 +7,10 @@ import javax.inject.Inject
 
 class CommentRepository @Inject constructor(private val commentDao: CommentDao) {
 
+    suspend fun insertCommentList(commentList: List<Comment>) {
+        commentDao.insertCommentList(commentList.map { CommentMapper.fromDomain(it) })
+    }
+
     suspend fun insertComment(comment: Comment) {
         commentDao.insertComment(CommentMapper.fromDomain(comment))
     }

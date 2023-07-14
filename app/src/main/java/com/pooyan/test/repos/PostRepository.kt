@@ -7,8 +7,8 @@ import javax.inject.Inject
 
 class PostRepository @Inject constructor(private val postDao: PostDao) {
 
-    suspend fun insertPost(post: Post) {
-        postDao.insertPost(PostMapper.fromDomain(post))
+    suspend fun insertPost(postList: List<Post>) {
+        postDao.insertPosts(postList.map { PostMapper.fromDomain(it) })
     }
 
     suspend fun getPosts(count: Int) =

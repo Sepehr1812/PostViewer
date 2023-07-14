@@ -10,7 +10,7 @@ import com.pooyan.test.data.db.entities.PostEntity
 interface PostDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPost(postEntity: PostEntity)
+    suspend fun insertPosts(postEntityList: List<PostEntity>)
 
     @Query("SELECT * FROM post ORDER BY id DESC LIMIT :count")
     suspend fun getPosts(count: Int): List<PostEntity>
