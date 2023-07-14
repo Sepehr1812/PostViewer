@@ -3,6 +3,10 @@ package com.pooyan.test.di
 import android.content.Context
 import androidx.room.Room
 import com.pooyan.test.data.db.ApplicationDatabase
+import com.pooyan.test.data.db.dao.CommentDao
+import com.pooyan.test.data.db.dao.PostDao
+import com.pooyan.test.repos.CommentRepository
+import com.pooyan.test.repos.PostRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,4 +38,12 @@ object AppModule {
     @Provides
     fun provideCommentDao(applicationDatabase: ApplicationDatabase) =
         applicationDatabase.commentDao()
+
+    @Singleton
+    @Provides
+    fun providePostRepository(postDao: PostDao) = PostRepository(postDao)
+
+    @Singleton
+    @Provides
+    fun provideCommentRepository(commentDao: CommentDao) = CommentRepository(commentDao)
 }
