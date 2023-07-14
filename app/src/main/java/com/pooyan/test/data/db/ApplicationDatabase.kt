@@ -7,7 +7,7 @@ import com.pooyan.test.data.db.dao.PostDao
 import com.pooyan.test.data.db.entities.CommentEntity
 import com.pooyan.test.data.db.entities.PostEntity
 
-@Database(entities = [PostEntity::class, CommentEntity::class], version = 1)
+@Database(entities = [PostEntity::class, CommentEntity::class], version = 1, exportSchema = false)
 abstract class ApplicationDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao
