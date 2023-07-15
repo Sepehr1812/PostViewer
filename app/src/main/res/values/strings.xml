@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">PooyanTest</string>
+
+    <plurals name="likes">
+        <item quantity="one">%d Like</item>
+        <item quantity="other">%d Likes</item>
+    </plurals>
+
+    <plurals name="comments">
+        <item quantity="one">%d Comment</item>
+        <item quantity="other">%d Comments</item>
+    </plurals>
 </resources>
