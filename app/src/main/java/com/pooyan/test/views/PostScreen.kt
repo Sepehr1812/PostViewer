@@ -11,25 +11,35 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
@@ -52,17 +62,38 @@ fun PostScreen(postId: Int) {
         val pagingItems = viewModel.getComments(postId).collectAsLazyPagingItems()
 
         Surface {
-            PostDetails(post, pagingItems = pagingItems) {
-                viewModel.updateLikes(postId, it)
-                if (it != post.likes) viewModel.updateIsLiked(postId, it > post.likes)
-            }
+            PostDetails(
+                post = post,
+                pagingItems = pagingItems,
+                onLikeClick = {
+                    viewModel.updateLikes(postId, it)
+                    if (it != post.likes) viewModel.updateIsLiked(postId, it > post.likes)
+                },
+                onCommentSent = { content, newCommentCount ->
+                    viewModel.updateComments(postId, newCommentCount)
+                    viewModel.insertComment(
+                        Comment(
+                            id = 0,
+                            user = "me",
+                            content = content,
+                            postId = postId
+                        )
+                    )
+                    pagingItems.refresh()
+                }
+            )
         }
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun PostDetails(post: Post, pagingItems: LazyPagingItems<Comment>, onLikeClick: (Int) -> Unit) {
+fun PostDetails(
+    post: Post,
+    pagingItems: LazyPagingItems<Comment>,
+    onLikeClick: (Int) -> Unit,
+    onCommentSent: (String, Int) -> Unit
+) {
     val context = LocalContext.current
 
     Column(modifier = Modifier.padding(all = 8.dp)) {
@@ -92,11 +123,12 @@ fun PostDetails(post: Post, pagingItems: LazyPagingItems<Comment>, onLikeClick: 
 
         // comments
         Spacer(modifier = Modifier.height(4.dp))
+        var commentCount by remember { mutableStateOf(post.comments) }
         Text(
             text = pluralStringResource(
                 id = R.plurals.comments,
-                count = post.comments,
-                post.comments
+                count = commentCount,
+                commentCount
             ),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(start = 12.dp)
@@ -111,7 +143,7 @@ fun PostDetails(post: Post, pagingItems: LazyPagingItems<Comment>, onLikeClick: 
         Divider(Modifier.fillMaxWidth())
         Text(text = "Comments", style = MaterialTheme.typography.titleLarge)
 
-        LazyColumn {
+        LazyColumn(modifier = Modifier.height(192.dp)) {
 
             items(
                 items = pagingItems,
@@ -167,6 +199,48 @@ fun PostDetails(post: Post, pagingItems: LazyPagingItems<Comment>, onLikeClick: 
                 else -> {}
             }
         }
+
+        // comment text field
+        Spacer(modifier = Modifier.height(16.dp))
+
+        var text by remember { mutableStateOf(TextFieldValue("")) }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+        ) {
+            TextField(
+                value = text,
+                onValueChange = { newText ->
+                    text = newText
+                },
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.type_your_comment),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                shape = RoundedCornerShape(24.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                )
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Button(
+                onClick = {
+                    commentCount = commentCount.plus(1)
+                    onCommentSent(text.text, commentCount)
+                    text = TextFieldValue("")
+                },
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            ) {
+                Text(text = stringResource(R.string.send))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
@@ -210,8 +284,11 @@ fun CommentItem(comment: Comment) {
 //                    "Hi everyone!",
 //                    25,
 //                    1,
-//                    R.drawable.profile_bg_men
-//                )
+//                    R.drawable.profile_bg_men,
+//                    false
+//                ),
+//                null,
+//                {}
 //            )
 //        }
 //    }

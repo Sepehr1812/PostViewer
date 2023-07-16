@@ -3,6 +3,8 @@
 
     <string name="loading_posts">Loading Posts…</string>
     <string name="loading_comments">Loading Comments…</string>
+    <string name="type_your_comment">Type your comment…</string>
+    <string name="send">Send</string>
 
     <plurals name="likes">
         <item quantity="one">%d Like</item>
