@@ -18,6 +18,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -46,18 +48,21 @@ fun PostScreen(postId: Int) {
         viewModel.getPost(postId)
     }
 
-    viewModel.postResponse?.also {
-        val pagingItems = viewModel.getComments(it.id).collectAsLazyPagingItems()
+    viewModel.postResponse?.also { post ->
+        val pagingItems = viewModel.getComments(postId).collectAsLazyPagingItems()
 
         Surface {
-            PostDetails(it, pagingItems = pagingItems)
+            PostDetails(post, pagingItems = pagingItems) {
+                viewModel.updateLikes(postId, it)
+                if (it != post.likes) viewModel.updateIsLiked(postId, it > post.likes)
+            }
         }
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun PostDetails(post: Post, pagingItems: LazyPagingItems<Comment>) {
+fun PostDetails(post: Post, pagingItems: LazyPagingItems<Comment>, onLikeClick: (Int) -> Unit) {
     val context = LocalContext.current
 
     Column(modifier = Modifier.padding(all = 8.dp)) {
@@ -77,9 +82,12 @@ fun PostDetails(post: Post, pagingItems: LazyPagingItems<Comment>) {
 
         // likes
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = pluralStringResource(id = R.plurals.likes, count = post.likes, post.likes),
-            style = MaterialTheme.typography.titleMedium
+        val likedState = remember { mutableStateOf(post.isLiked) }
+        LikeIcon(
+            isLiked = post.isLiked,
+            likes = post.likes,
+            likedState = likedState,
+            onLikeClick = onLikeClick
         )
 
         // comments
@@ -90,7 +98,8 @@ fun PostDetails(post: Post, pagingItems: LazyPagingItems<Comment>) {
                 count = post.comments,
                 post.comments
             ),
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(start = 12.dp)
         )
 
         // cation

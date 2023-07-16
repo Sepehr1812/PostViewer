@@ -25,6 +25,10 @@ class PostRepository @Inject constructor(private val postDao: PostDao) {
         postDao.updateLikes(postId, likes)
     }
 
+    suspend fun updateIsLiked(postId: Int, isLiked: Boolean) {
+        postDao.updateIsLiked(postId, isLiked)
+    }
+
     suspend fun updateComments(postId: Int, comments: Int) {
         postDao.updateComments(postId, comments)
     }

@@ -16,6 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -43,13 +45,18 @@ fun PostListScreen(navController: NavController, viewModel: PostListViewModel) {
 
     Surface {
         PostList(
+            viewModel = viewModel,
             pagingItems = pagingItems,
             onCardClick = { navController.navigate(Routes.getPostScreenPath(it)) })
     }
 }
 
 @Composable
-fun PostList(pagingItems: LazyPagingItems<Post>, onCardClick: (Int) -> Unit) {
+fun PostList(
+    viewModel: PostListViewModel,
+    pagingItems: LazyPagingItems<Post>,
+    onCardClick: (Int) -> Unit
+) {
     val context = LocalContext.current
 
     LazyColumn {
@@ -59,7 +66,10 @@ fun PostList(pagingItems: LazyPagingItems<Post>, onCardClick: (Int) -> Unit) {
             key = { it.id }
         ) {
             it?.also { post ->
-                PostCard(post = post, onCardClick = onCardClick)
+                PostCard(post = post, onCardClick = onCardClick) {
+                    viewModel.updateLikes(post.id, it)
+                    if (it != post.likes) viewModel.updateIsLiked(post.id, it > post.likes)
+                }
             }
         }
 
@@ -112,7 +122,7 @@ fun PostList(pagingItems: LazyPagingItems<Post>, onCardClick: (Int) -> Unit) {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun PostCard(post: Post, onCardClick: (Int) -> Unit) {
+fun PostCard(post: Post, onCardClick: (Int) -> Unit, onLikeClick: (Int) -> Unit) {
     Column(modifier = Modifier
         .padding(all = 8.dp)
         .clickable { onCardClick(post.id) }) {
@@ -132,9 +142,12 @@ fun PostCard(post: Post, onCardClick: (Int) -> Unit) {
 
         // likes
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = pluralStringResource(id = R.plurals.likes, count = post.likes, post.likes),
-            style = MaterialTheme.typography.titleMedium
+        val likedState = remember { mutableStateOf(post.isLiked) }
+        LikeIcon(
+            isLiked = post.isLiked,
+            likes = post.likes,
+            likedState = likedState,
+            onLikeClick = onLikeClick
         )
 
         // comments
@@ -145,7 +158,8 @@ fun PostCard(post: Post, onCardClick: (Int) -> Unit) {
                 count = post.comments,
                 post.comments
             ),
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(start = 12.dp)
         )
 
         // cation

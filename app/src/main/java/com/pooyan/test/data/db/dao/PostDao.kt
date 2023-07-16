@@ -21,6 +21,9 @@ interface PostDao {
     @Query("UPDATE post SET likes = :likes WHERE id = :postId")
     suspend fun updateLikes(postId: Int, likes: Int)
 
+    @Query("UPDATE post SET isLiked = :isLiked WHERE id = :postId")
+    suspend fun updateIsLiked(postId: Int, isLiked: Boolean)
+
     @Query("UPDATE post SET comments = :comments WHERE id = :postId")
     suspend fun updateComments(postId: Int, comments: Int)
 }

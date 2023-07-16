@@ -10,6 +10,7 @@ data class PostEntity(
     val likes: Int,
     val comments: Int, // comments count
     val image: Int,
+    val isLiked: Boolean,
 
     @PrimaryKey
     val id: Int

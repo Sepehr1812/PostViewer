@@ -6,5 +6,6 @@ data class Post(
     val caption: String,
     val likes: Int,
     val comments: Int, // comments count
-    val image: Int
+    val image: Int,
+    val isLiked: Boolean
 )

@@ -31,7 +31,8 @@ object DataUtil {
                         Random.nextInt(10, 1000),
                         // detecting comments count
                         commentList.groupBy { comment -> comment.postId }[it]?.size ?: 0,
-                        listOf(R.drawable.profile_bg_men, R.drawable.profile_bg_women).random()
+                        listOf(R.drawable.profile_bg_men, R.drawable.profile_bg_women).random(),
+                        false
                     )
                 )
             }

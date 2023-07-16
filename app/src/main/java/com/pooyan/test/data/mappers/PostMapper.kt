@@ -6,10 +6,10 @@ import com.pooyan.test.data.models.Post
 object PostMapper {
 
     fun toDomain(postEntity: PostEntity) = postEntity.run {
-        Post(id, user, caption, likes, comments, image)
+        Post(id, user, caption, likes, comments, image, isLiked)
     }
 
     fun fromDomain(post: Post) = post.run {
-        PostEntity(user, caption, likes, comments, image, id)
+        PostEntity(user, caption, likes, comments, image, isLiked, id)
     }
 }

@@ -12,6 +12,7 @@ import com.pooyan.test.usecases.GetComments
 import com.pooyan.test.usecases.GetPost
 import com.pooyan.test.usecases.InsertComment
 import com.pooyan.test.usecases.UpdateComments
+import com.pooyan.test.usecases.UpdateIsLiked
 import com.pooyan.test.usecases.UpdateLikes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ class PostViewModel @Inject constructor(
     private val getPost: GetPost,
     private val getComments: GetComments,
     private val updateLikes: UpdateLikes,
+    private val updateIsLiked: UpdateIsLiked,
     private val updateComments: UpdateComments
 ) : ViewModel() {
 
@@ -54,6 +56,12 @@ class PostViewModel @Inject constructor(
     fun updateLikes(postId: Int, likes: Int) {
         viewModelScope.launch {
             updateLikes.executeUseCase(UpdateLikes.RequestValue(postId, likes))
+        }
+    }
+
+    fun updateIsLiked(postId: Int, isLiked: Boolean) {
+        viewModelScope.launch {
+            updateIsLiked.executeUseCase(UpdateIsLiked.RequestValue(postId, isLiked))
         }
     }
 }
