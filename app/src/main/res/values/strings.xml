@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">PooyanTest</string>
 
+    <string name="loading_posts">Loading Posts…</string>
+
     <plurals name="likes">
         <item quantity="one">%d Like</item>
         <item quantity="other">%d Likes</item>

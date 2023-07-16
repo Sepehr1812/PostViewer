@@ -1,14 +1,17 @@
 package com.pooyan.test.usecases
 
-import com.pooyan.test.data.models.Post
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import com.pooyan.test.repos.PostPagingSource
 import com.pooyan.test.repos.PostRepository
 import javax.inject.Inject
 
-class GetPosts @Inject constructor(private val postRepository: PostRepository) :
-    BaseUseCase<GetPosts.RequestValue, List<Post>>() {
+class GetPosts @Inject constructor(private val postRepository: PostRepository) {
 
-    data class RequestValue(val count: Int) : BaseUseCase.RequestValue
-
-    override suspend fun executeUseCase(requestValues: RequestValue) =
-        postRepository.getPosts(requestValues.count)
+    fun executeUseCase() = Pager(
+        config = PagingConfig(pageSize = 10),
+        pagingSourceFactory = {
+            PostPagingSource(postRepository)
+        }
+    ).flow
 }

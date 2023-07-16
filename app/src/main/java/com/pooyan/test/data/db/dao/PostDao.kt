@@ -12,8 +12,8 @@ interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPosts(postEntityList: List<PostEntity>)
 
-    @Query("SELECT * FROM post ORDER BY id DESC LIMIT :count")
-    suspend fun getPosts(count: Int): List<PostEntity>
+    @Query("SELECT * FROM post ORDER BY id DESC LIMIT :count OFFSET :offset")
+    suspend fun getPosts(count: Int, offset: Int): List<PostEntity>
 
     @Query("UPDATE post SET likes = :likes WHERE id = :postId")
     suspend fun updateLikes(postId: Int, likes: Int)

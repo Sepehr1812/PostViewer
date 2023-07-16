@@ -11,8 +11,8 @@ class PostRepository @Inject constructor(private val postDao: PostDao) {
         postDao.insertPosts(postList.map { PostMapper.fromDomain(it) })
     }
 
-    suspend fun getPosts(count: Int) =
-        postDao.getPosts(count).map {
+    suspend fun getPosts(count: Int, offset: Int) =
+        postDao.getPosts(count, offset).map {
             PostMapper.toDomain(it)
         }
 
