@@ -11,6 +11,6 @@ data class PostEntity(
     val comments: Int, // comments count
     val image: Int,
 
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0
+    @PrimaryKey
+    val id: Int
 )

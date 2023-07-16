@@ -2,6 +2,7 @@
     <string name="app_name">PooyanTest</string>
 
     <string name="loading_posts">Loading Posts…</string>
+    <string name="loading_comments">Loading Comments…</string>
 
     <plurals name="likes">
         <item quantity="one">%d Like</item>

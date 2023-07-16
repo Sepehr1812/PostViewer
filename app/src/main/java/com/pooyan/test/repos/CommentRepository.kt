@@ -15,9 +15,8 @@ class CommentRepository @Inject constructor(private val commentDao: CommentDao) 
         commentDao.insertComment(CommentMapper.fromDomain(comment))
     }
 
-    suspend fun getComments(postId: Int, count: Int) =
-        commentDao.getComments(postId, count).map {
+    suspend fun getComments(postId: Int, count: Int, offset: Int) =
+        commentDao.getComments(postId, count, offset).map {
             CommentMapper.toDomain(it)
         }
-
 }

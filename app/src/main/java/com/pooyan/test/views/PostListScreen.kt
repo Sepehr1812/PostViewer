@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -34,6 +33,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.pooyan.test.R
 import com.pooyan.test.data.models.Post
+import com.pooyan.test.utils.Routes
 import com.pooyan.test.viewmodels.PostListViewModel
 
 @Composable
@@ -42,7 +42,9 @@ fun PostListScreen(navController: NavController, viewModel: PostListViewModel) {
     val pagingItems = viewModel.getPosts().collectAsLazyPagingItems()
 
     Surface {
-        PostList(pagingItems = pagingItems, onCardClick = { navController })
+        PostList(
+            pagingItems = pagingItems,
+            onCardClick = { navController.navigate(Routes.getPostScreenPath(it)) })
     }
 }
 
@@ -129,7 +131,7 @@ fun PostCard(post: Post, onCardClick: (Int) -> Unit) {
         )
 
         // likes
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = pluralStringResource(id = R.plurals.likes, count = post.likes, post.likes),
             style = MaterialTheme.typography.titleMedium

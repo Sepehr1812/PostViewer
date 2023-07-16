@@ -1,16 +1,19 @@
 package com.pooyan.test.usecases
 
-import com.pooyan.test.data.models.Comment
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import com.pooyan.test.repos.CommentPagingSource
 import com.pooyan.test.repos.CommentRepository
 import javax.inject.Inject
 
-class GetComments @Inject constructor(private val commentRepository: CommentRepository) :
-    BaseUseCase<GetComments.RequestValue, List<Comment>>() {
+class GetComments @Inject constructor(private val commentRepository: CommentRepository) {
 
-    data class RequestValue(val postId: Int, val count: Int) : BaseUseCase.RequestValue
+    data class RequestValue(val postId: Int)
 
-    override suspend fun executeUseCase(requestValues: RequestValue) =
-        requestValues.run {
-            commentRepository.getComments(postId, count)
+    fun executeUseCase(requestValues: RequestValue) = Pager(
+        config = PagingConfig(pageSize = 10),
+        pagingSourceFactory = {
+            CommentPagingSource(commentRepository, requestValues.postId)
         }
+    ).flow
 }

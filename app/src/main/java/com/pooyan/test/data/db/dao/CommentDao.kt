@@ -15,6 +15,6 @@ interface CommentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertComment(commentEntity: CommentEntity)
 
-    @Query("SELECT * FROM comment WHERE postId = :postId ORDER BY id DESC LIMIT :count")
-    suspend fun getComments(postId: Int, count: Int): List<CommentEntity>
+    @Query("SELECT * FROM comment WHERE postId = :postId ORDER BY id DESC LIMIT :count OFFSET :offset")
+    suspend fun getComments(postId: Int, count: Int, offset: Int): List<CommentEntity>
 }
